@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавить событие</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>➕ Добавить событие</h1>
+
+  <form id="event-form">
+    <label for="title">Название:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="time">Время:</label><br>
+    <input type="time" id="time" name="time" required><br><br>
+
+    <label for="category">Категория:</label><br>
+    <select id="category" name="category" required>
+      <option value="work">Работа</option>
+      <option value="personal">Личное</option>
+      <option value="health">Здоровье</option>
+      <option value="other">Другое</option>
+    </select><br><br>
+
+    <label for="description">Описание (необязательно):</label><br>
+    <textarea id="description" name="description"></textarea><br><br>
+
+    <button type="submit">Добавить событие</button>
+  </form>
+
+  <a href="/">← На главную</a>
+
+  <script>
+    document.getElementById('event-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch('/api/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('Событие успешно добавлено!');
+          e.target.reset(); // Очистить форму
+        } else {
+          const error = await response.json();
+          alert('Ошибка: ' + error.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Ошибка сети');
+      }
+    });
+  </script>
+</body>
+</html>

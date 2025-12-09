@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📅 Календарь дня</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>📅 Календарь дня</h1>
+
+  <a href="/add-event.html">➕ Добавить событие</a>
+  <br><br>
+
+  <div id="events-list">
+    <p>Загрузка событий...</p>
+  </div>
+
+  <script>
+    async function loadEvents() {
+      try {
+        const response = await fetch('/api/events');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const events = await response.json();
+        const list = document.getElementById('events-list');
+        list.innerHTML = '';
+
+        if (events.length === 0) {
+          list.innerHTML = '<p>Нет событий на сегодня.</p>';
+        } else {
+          events.forEach(event => {
+            const div = document.createElement('div');
+            div.className = 'event';
+            div.innerHTML = `
+              <strong>${event.title}</strong> (${event.time})<br>
+              Категория: ${event.category}<br>
+              Описание: ${event.description || '—'}<br>
+              <button onclick="deleteEvent(${event.id})" class="delete-btn">❌ Удалить</button>
+            `;
+            list.appendChild(div);
+          });
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки событий:', error);
+        document.getElementById('events-list').innerHTML = 
+          `<p style="color: red;">Ошибка: ${error.message}</p>`;
+      }
+    }
+
+    async function deleteEvent(id) {
+      if (!confirm('Вы уверены, что хотите удалить это событие?')) return;
+
+      try {
+        const response = await fetch(`/api/events/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Событие удалено');
+          loadEvents(); // Обновить список
+        } else {
+          const error = await response.json();
+          alert('Ошибка: ' + error.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Ошибка сети');
+      }
+    }
+
+    window.onload = loadEvents;
+  </script>
+</body>
+</html>
