@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  line-height: 1.6;
+}
+
+h1, h2 {
+  color: #2c3e50;
+}
+
+#events div {
+  padding: 10px;
+  margin: 5px 0;
+  background: #f8f9fa;
+  border-left: 4px solid #3498db;
+}
+
+input, button {
+  margin: 5px 0;
+  padding: 8px;
+}
+
+button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
